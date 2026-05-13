@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {MockBTC} from "./MockBTC.sol";
-import {MockETH} from "./MockETH.sol";
+// We use the interface to talk to the token contracts
+interface IERC20 {
+    function transfer(address to, uint256 amount) external returns (bool);
+    function transferFrom(address from, address to, uint256 amount) external returns (bool);
+}
 
 contract SatsSwapPair {
     address public btcToken;
@@ -17,24 +20,45 @@ contract SatsSwapPair {
     }
 
     /**
-     * @dev THE MATH: Constant Product Formula (x * y = k)
-     * This function calculates how much "Token B" you get for "Token A".
+     * @dev ADD LIQUIDITY: Now actually pulls tokens from the user.
+     */
+    function addLiquidity(uint256 amountBTC, uint256 amountETH) external {
+        // First, we pull the tokens from the user's wallet into this contract
+        IERC20(btcToken).transferFrom(msg.sender, address(this), amountBTC);
+        IERC20(ethToken).transferFrom(msg.sender, address(this), amountETH);
+
+        if (reserveBTC == 0 && reserveETH == 0) {
+            reserveBTC = amountBTC;
+            reserveETH = amountETH;
+        } else {
+            uint256 expectedETH = (reserveETH * amountBTC) / reserveBTC;
+            require(amountETH >= expectedETH, "Ratio must match current reserves");
+
+            reserveBTC += amountBTC;
+            reserveETH += amountETH;
+        }
+    }
+
+    /**
+     * @dev SWAP: Now pulls the input token and sends the output token.
      */
     function swap(address tokenIn, uint256 amountIn) external returns (uint256 amountOut) {
-        require(tokenIn == btcToken || tokenIn == ethToken, "Invalid token address");
-        require(amountIn > 0, "Must swap more than 0");
+        require(tokenIn == btcToken || tokenIn == ethToken, "Invalid token");
 
-        // Identify which token is being "pushed" in and which is being "pulled" out
         bool isBTC = tokenIn == btcToken;
+        address tokenOut = isBTC ? ethToken : btcToken;
+
         (uint256 reserveIn, uint256 reserveOut) = isBTC
             ? (reserveBTC, reserveETH)
             : (reserveETH, reserveBTC);
 
-        // AMM Formula: (reserveOut * amountIn) / (reserveIn + amountIn)
-        // This ensures the vault stays balanced.
+        // Calculate the math
         amountOut = (reserveOut * amountIn) / (reserveIn + amountIn);
 
-        // Update the internal accounting (Reserves)
+        // 1. Pull the user's tokens into the vault
+        IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn);
+
+        // 2. Update our internal accounting
         if (isBTC) {
             reserveBTC += amountIn;
             reserveETH -= amountOut;
@@ -42,6 +66,9 @@ contract SatsSwapPair {
             reserveETH += amountIn;
             reserveBTC -= amountOut;
         }
+
+        // 3. Send the exchanged tokens to the user
+        IERC20(tokenOut).transfer(msg.sender, amountOut);
 
         return amountOut;
     }
