@@ -1,3 +1,4 @@
+[![Sats Swap CI 🛰️](https://github.com/srimadhavsats/sats-swap/actions/workflows/test.yml/badge.svg)](https://github.com/srimadhavsats/sats-swap/actions/workflows/test.yml)
 # Sats Swap 🛰️
 
 A modular, minimal Decentralized Exchange (DEX) built with Solidity and Foundry. 
