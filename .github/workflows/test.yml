@@ -10,6 +10,10 @@ on:
 permissions:
   contents: read
 
+# Node.js newer runtime
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   check:
     name: Foundry Build & Test
