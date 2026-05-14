@@ -1,66 +1,35 @@
-## Foundry
+# Sats Swap 🛰️
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A modular, minimal Decentralized Exchange (DEX) built with Solidity and Foundry. 
 
-Foundry consists of:
+## 📌 Overview
+Sats Swap is an Automated Market Maker (AMM) that utilizes the Constant Product Formula ($x * y = k$) to facilitate decentralized token swaps. It is designed with a strictly modular architecture, separating core math, factory management, and user routing.
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## 🏗️ Architecture
+The project is divided into three primary components:
 
-## Documentation
+* **SatsSwapPair**: The core engine. Handles the math, tracks reserves, and executes token transfers.
+* **SatsSwapFactory**: The registry. Deploys new pair contracts and maintains a mapping of all existing pairs.
+* **SatsSwapRouter**: The entry point. A high-level contract that simplifies user interactions by finding pairs and managing multi-step approvals.
 
-https://book.getfoundry.sh/
+## 🚀 Technical Stack
+* **Language:** Solidity ^0.8.20
+* **Framework:** Foundry (Forge)
+* **Standard:** ERC-20 (Mock implementations included for testing)
 
-## Usage
+## 🛠️ Getting Started
 
-### Build
+### Prerequisites
+Ensure you have [Foundry](https://getfoundry.sh/) installed on your system.
 
-```shell
-$ forge build
+### Installation
+```
+git clone https://github.com/srimadhavsats/sats-swap.git
+cd sats-swap
+forge install
 ```
 
-### Test
-
-```shell
-$ forge test
+### Testing
 ```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+forge test -vv
 ```
