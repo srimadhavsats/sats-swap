@@ -1,35 +1,36 @@
-name: CI
-
-permissions: {}
+name: Sats Swap CI 🛰️
 
 on:
   push:
+    branches: ["main"]
   pull_request:
+    branches: ["main"]
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   check:
-    name: Foundry project
+    name: Foundry Build & Test
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout Code
+        uses: actions/checkout@v4
         with:
-          persist-credentials: false
           submodules: recursive
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
 
-      - name: Show Forge version
-        run: forge --version
-
-      - name: Run Forge fmt
+      - name: Run Formatter Check
         run: forge fmt --check
 
-      - name: Run Forge build
+      - name: Run Build
         run: forge build --sizes
 
-      - name: Run Forge tests
+      - name: Run Full Test Suite
         run: forge test -vvv
