@@ -19,20 +19,16 @@ contract SatsSwapRouter {
     /**
      * @dev High-level Swap: The Router finds the pair and handles the logic.
      */
-    function swapExactTokensForTokens(
-        address tokenIn,
-        address tokenOut,
-        uint256 amountIn
-    ) external returns (uint256 amountOut) {
+    function swapExactTokensForTokens(address tokenIn, address tokenOut, uint256 amountIn)
+        external
+        returns (uint256 amountOut)
+    {
         // 1. Find the specific vault (pair) from the factory
         address pair = SatsSwapFactory(factory).getPair(tokenIn, tokenOut);
         require(pair != address(0), "SatsSwapRouter: PAIR_NOT_FOUND");
 
         // 2. Pull the tokens from the user to the Router
-        require(
-            IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn),
-            "SatsSwapRouter: TRANSFER_IN_FAILED"
-        );
+        require(IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn), "SatsSwapRouter: TRANSFER_IN_FAILED");
 
         // 3. Approve the Pair to take the tokens from the Router
         IERC20(tokenIn).approve(pair, amountIn);

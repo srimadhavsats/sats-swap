@@ -37,14 +37,8 @@ contract SatsSwapPair {
      * @param amountETH The amount of ETH to deposit.
      */
     function addLiquidity(uint256 amountBTC, uint256 amountETH) external {
-        require(
-            IERC20(btcToken).transferFrom(msg.sender, address(this), amountBTC),
-            "SatsSwap: BTC_TRANSFER_FAILED"
-        );
-        require(
-            IERC20(ethToken).transferFrom(msg.sender, address(this), amountETH),
-            "SatsSwap: ETH_TRANSFER_FAILED"
-        );
+        require(IERC20(btcToken).transferFrom(msg.sender, address(this), amountBTC), "SatsSwap: BTC_TRANSFER_FAILED");
+        require(IERC20(ethToken).transferFrom(msg.sender, address(this), amountETH), "SatsSwap: ETH_TRANSFER_FAILED");
 
         if (reserveBTC == 0 && reserveETH == 0) {
             reserveBTC = amountBTC;
@@ -72,16 +66,11 @@ contract SatsSwapPair {
         bool isBTC = tokenIn == btcToken;
         address tokenOut = isBTC ? ethToken : btcToken;
 
-        (uint256 reserveIn, uint256 reserveOut) = isBTC
-            ? (reserveBTC, reserveETH)
-            : (reserveETH, reserveBTC);
+        (uint256 reserveIn, uint256 reserveOut) = isBTC ? (reserveBTC, reserveETH) : (reserveETH, reserveBTC);
 
         amountOut = (reserveOut * amountIn) / (reserveIn + amountIn);
 
-        require(
-            IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn),
-            "SatsSwap: TRANSFER_IN_FAILED"
-        );
+        require(IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn), "SatsSwap: TRANSFER_IN_FAILED");
 
         if (isBTC) {
             reserveBTC += amountIn;
@@ -91,10 +80,7 @@ contract SatsSwapPair {
             reserveBTC -= amountOut;
         }
 
-        require(
-            IERC20(tokenOut).transfer(msg.sender, amountOut),
-            "SatsSwap: TRANSFER_OUT_FAILED"
-        );
+        require(IERC20(tokenOut).transfer(msg.sender, amountOut), "SatsSwap: TRANSFER_OUT_FAILED");
 
         return amountOut;
     }

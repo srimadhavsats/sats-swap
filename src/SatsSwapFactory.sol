@@ -12,7 +12,7 @@ contract SatsSwapFactory {
     address[] public allPairs;
 
     // This event tells the outside world (like a website) that a new pair exists
-    event PairCreated(address indexed token0, address indexed token1, address pair, uint);
+    event PairCreated(address indexed token0, address indexed token1, address pair, uint256);
 
     function createPair(address tokenA, address tokenB) external returns (address pair) {
         require(tokenA != tokenB, "SatsSwap: IDENTICAL_ADDRESSES");
@@ -31,7 +31,7 @@ contract SatsSwapFactory {
         emit PairCreated(tokenA, tokenB, pair, allPairs.length);
     }
 
-    function allPairsLength() external view returns (uint) {
+    function allPairsLength() external view returns (uint256) {
         return allPairs.length;
     }
 }

@@ -42,11 +42,7 @@ contract SatsSwapRouterTest is Test {
         // User only has to approve the ROUTER
         btc.approve(address(router), amountIn);
 
-        uint256 amountOut = router.swapExactTokensForTokens(
-            address(btc),
-            address(eth),
-            amountIn
-        );
+        uint256 amountOut = router.swapExactTokensForTokens(address(btc), address(eth), amountIn);
 
         console.log("-----------------------");
         console.log("FULL SYSTEM TEST: SUCCESS");
